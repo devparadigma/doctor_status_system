@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Админ-панель</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+  <style>
+    :root {
+      --color-primary: #6366f1;
+      --color-primary-hover: #4f46e5;
+      --color-danger: #ef4444;
+      --color-danger-hover: #dc2626;
+      --color-success: #10b981;
+      --color-success-hover: #059669;
+      --color-gray: #6b7280;
+      --color-gray-hover: #4b5563;
+      --color-bg: #f9fafb;
+      --color-card: #ffffff;
+      --color-text: #1f2937;
+      --color-text-light: #6b7280;
+      --color-border: #e5e7eb;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --radius: 6px;
+      --radius-full: 9999px;
+      --transition: all 0.2s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 1rem auto;
+      padding: 0 1rem;
+    }
+
+    .card {
+      background: var(--color-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1rem;
+      overflow: hidden;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius);
+      font-weight: 500;
+      font-size: 0.8125rem;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-icon {
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+      border-radius: var(--radius-full);
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .btn-danger {
+      background-color: var(--color-danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: var(--color-danger-hover);
+    }
+
+    .btn-success {
+      background-color: var(--color-success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: var(--color-success-hover);
+    }
+
+    .btn-gray {
+      background-color: var(--color-gray);
+      color: white;
+    }
+
+    .btn-gray:hover {
+      background-color: var(--color-gray-hover);
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+
+    th, td {
+      padding: 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: middle;
+    }
+
+    th {
+      font-weight: 500;
+      color: var(--color-text-light);
+      background-color: rgba(249, 250, 251, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: rgba(249, 250, 251, 0.5);
+    }
+
+    .avatar-container {
+      position: relative;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+
+    .avatar-container:hover::after {
+      content: 'edit';
+      font-family: 'Material Icons Round';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      font-size: 0.875rem;
+    }
+
+    .placeholder-avatar {
+      width: 100%;
+      height: 100%;
+      background-color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-light);
+      font-size: 1rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.25rem;
+      justify-content: flex-end;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.375rem 0.5rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      transition: var(--transition);
+      background-color: var(--color-card);
+      color: var(--color-text);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.5rem center;
+      background-size: 0.75rem;
+      padding-right: 1.75rem;
+    }
+
+    /* Модальное окно */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal {
+      background: var(--color-card);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 550px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow);
+      animation: slideIn 0.3s ease;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .modal-body {
+      padding: 1rem;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .btn-close {
+      background: transparent;
+      border: none;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--color-text-light);
+      transition: var(--transition);
+      padding: 0;
+      font-size: 1.25rem;
+    }
+
+    .btn-close:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+      color: var(--color-text);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .form-group {
+      margin-bottom: 0.75rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--color-text);
+    }
+
+    .file-input-wrapper {
+      position: relative;
+    }
+
+    .file-input {
+      position: absolute;
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .file-input-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.375rem 0.5rem;
+      background-color: #f3f4f6;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.8125rem;
+      transition: var(--transition);
+      color: var(--color-text);
+    }
+
+    .file-input-label:hover {
+      background-color: #e5e7eb;
+    }
+
+    .material-icons {
+      font-family: 'Material Icons Round';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 1rem;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      th, td {
+        padding: 0.375rem;
+      }
+      
+      .actions {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .actions .btn {
+        width: 100%;
+      }
+    }
+
+    /* Стили для скрытия элементов */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Стили для статуса */
+    .status-badge {
+      padding: 0.125rem 0.375rem;
+      border-radius: var(--radius);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .status-free {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+
+    .status-occupied {
+      background-color: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* Компактные стили для кнопок в таблице */
+    .table-btn {
+      padding: 0.25rem;
+      border-radius: var(--radius);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+    
+    /* Стили для фиксированной ширины колонок */
+    .col-avatar {
+      width: 60px;
+    }
+    
+    .col-actions {
+      width: 100px;
+    }
+    
+    .col-status {
+      width: 100px;
+    }
+    
+    .col-room {
+      width: 80px;
+    }
+    
+    /* Стили для расписания */
+    .schedule-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: 0.75rem;
+    }
+    
+    .schedule-list li {
+      margin-bottom: 0.25rem;
+      padding: 0.125rem 0.25rem;
+      background-color: #f3f4f6;
+      border-radius: var(--radius);
+    }
+    
+    .schedule-help {
+      font-size: 0.75rem;
+      color: var(--color-text-light);
+      margin-top: 0.25rem;
+    }
+    
+    /* Новые стили для визуального редактора расписания */
+    .schedule-editor {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .schedule-day {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .day-label {
+      font-weight: 500;
+      width: 30px;
+      flex-shrink: 0;
+    }
+
+    .time-input {
+      flex-grow: 1;
+    }
+
+    /* Стили для уведомлений */
+    .toast {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      padding: 0.75rem 1rem;
+      background: var(--color-text);
+      color: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      z-index: 100;
+      opacity: 0;
+      transform: translateY(1rem);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <h1>Управление врачами</h1>
+        <button class="btn btn-primary" onclick="openAddModal()">
+          <span class="material-icons">add</span>
+          Добавить врача
+        </button>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-avatar">Фото</th>
+              <th>ФИО</th>
+              <th>Должность</th>
+              <th class="col-room">Кабинет</th>
+              <th>Расписание</th>
+              <th class="col-status">Статус</th>
+              <th class="col-actions">Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in doctors %}
+            <tr>
+              <td class="col-avatar">
+                <div class="avatar-container" onclick="openEditModal('{{ d.id }}')">
+                  {% if d.photo %}
+                  <img src="/static/photos/{{ d.photo }}" class="avatar" alt="{{ d.name }}">
+                  {% else %}
+                  <div class="placeholder-avatar">
+                    <span class="material-icons">person</span>
+                  </div>
+                  {% endif %}
+                </div>
+              </td>
+              <td>
+                <div>{{ d.name }}</div>
+                <div style="font-size: 0.75rem; color: var(--color-text-light);">
+                  Токен: {{ d.token }}
+                </div>
+              </td>
+              <td>{{ d.position }}</td>
+              <td class="col-room">{{ d.room }}</td>
+              <td>
+                <ul class="schedule-list">
+                  {% for schedule in doctor_schedules.get(d.id, []) %}
+                    <li>{{ schedule }}</li>
+                  {% else %}
+                    <li style="color: var(--color-text-light);">Нет расписания</li>
+                  {% endfor %}
+                </ul>
+              </td>
+              <td class="col-status">
+                <form method="post" action="/admin?token={{ admin_token }}">
+                  <input type="hidden" name="action" value="status">
+                  <input type="hidden" name="id" value="{{ d.id }}">
+                  <select name="occupied" class="form-control" onchange="this.form.submit()">
+                    <option value="0" {% if d.occupied == 0 %}selected{% endif %}>Свободно</option>
+                    <option value="1" {% if d.occupied == 1 %}selected{% endif %}>Занято</option>
+                  </select>
+                </form>
+              </td>
+              <td class="col-actions">
+                <div class="actions">
+                  <button class="btn btn-primary table-btn" onclick="openEditModal('{{ d.id }}')">
+                    <span class="material-icons">edit</span>
+                  </button>
+                  <button class="btn btn-danger table-btn" onclick="openDeleteModal('{{ d.id }}', '{{ d.name }}')">
+                    <span class="material-icons">delete</span>
+                  </button>
+                  <button class="btn btn-gray table-btn" onclick="copyStatusLink('{{ d.token }}')">
+                    <span class="material-icons">content_copy</span>
+                  </button>
+                  <a href="{{ url_root }}display/{{ d.room }}" target="_blank" class="btn btn-gray table-btn">
+                    <span class="material-icons">visibility</span>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно добавления врача -->
+  <div id="addModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Добавить врача</h3>
+        <button class="btn-close" onclick="closeModal('addModal')">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <form id="addForm" method="post" action="/admin?token={{ admin_token }}" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="add">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="add-name">ФИО</label>
+              <input type="text" id="add-name" name="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="add-position">Должность</label>
+              <input type="text" id="add-position" name="position" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="add-room">Кабинет</label>
+              <input type="number" id="add-room" name="room" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="add-token">Токен</label>
+              <input type="text" id="add-token" name="token" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="add-info">Информация</label>
+            <textarea id="add-info" name="info" class="form-control" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="add-photo">Фото</label>
+            <div class="file-input-wrapper">
+              <input type="file" id="add-photo" name="photo" class="file-input" accept="image/*">
+              <label for="add-photo" class="file-input-label">
+                <span class="material-icons">upload</span>
+                <span>Выбрать файл</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Расписание</label>
+            <div class="schedule-editor">
+              <div class="schedule-day">
+                <label class="day-label">Пн</label>
+                <input type="text" name="schedule_0" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Вт</label>
+                <input type="text" name="schedule_1" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Ср</label>
+                <input type="text" name="schedule_2" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Чт</label>
+                <input type="text" name="schedule_3" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Пт</label>
+                <input type="text" name="schedule_4" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Сб</label>
+                <input type="text" name="schedule_5" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Вс</label>
+                <input type="text" name="schedule_6" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+            </div>
+            <div class="schedule-help">
+              Введите время работы в формате ЧЧ:ММ-ЧЧ:ММ (например: 08:00-12:00).<br>
+              Оставьте поле пустым, если в этот день нет приема.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-gray" onclick="closeModal('addModal')">Отмена</button>
+          <button type="submit" class="btn btn-primary">Добавить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Модальное окно редактирования врача -->
+  <div id="editModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Редактировать врача</h3>
+        <button class="btn-close" onclick="closeModal('editModal')">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <form id="editForm" method="post" action="/admin?token={{ admin_token }}" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="edit">
+        <input type="hidden" id="edit-id" name="id" value="">
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="edit-name">ФИО</label>
+              <input type="text" id="edit-name" name="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="edit-position">Должность</label>
+              <input type="text" id="edit-position" name="position" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="edit-room">Кабинет</label>
+              <input type="number" id="edit-room" name="room" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="edit-token">Токен</label>
+              <input type="text" id="edit-token" name="token" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="edit-occupied">Статус</label>
+              <select id="edit-occupied" name="occupied" class="form-control">
+                <option value="0">Свободно</option>
+                <option value="1">Занято</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-info">Информация</label>
+            <textarea id="edit-info" name="info" class="form-control" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-photo">Фото</label>
+            <div class="file-input-wrapper">
+              <input type="file" id="edit-photo" name="photo" class="file-input" accept="image/*">
+              <label for="edit-photo" class="file-input-label">
+                <span class="material-icons">upload</span>
+                <span>Выбрать файл</span>
+              </label>
+            </div>
+            <div id="edit-photo-preview" style="margin-top: 0.5rem; display: none;">
+              <img id="edit-photo-img" src="" alt="Текущее фото" style="max-height: 100px; border-radius: var(--radius);">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-label">
+              <label>Расписание</label>
+              <label style="float: right;">
+                <input type="checkbox" name="update_schedule" value="1" checked>
+                Обновить расписание
+              </label>
+            </div>
+            <div class="schedule-editor">
+              <div class="schedule-day">
+                <label class="day-label">Пн</label>
+                <input type="text" name="schedule_0" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Вт</label>
+                <input type="text" name="schedule_1" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Ср</label>
+                <input type="text" name="schedule_2" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Чт</label>
+                <input type="text" name="schedule_3" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Пт</label>
+                <input type="text" name="schedule_4" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Сб</label>
+                <input type="text" name="schedule_5" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+              <div class="schedule-day">
+                <label class="day-label">Вс</label>
+                <input type="text" name="schedule_6" class="form-control time-input" placeholder="08:00-12:00">
+              </div>
+            </div>
+            <div class="schedule-help">
+              Введите время работы в формате ЧЧ:ММ-ЧЧ:ММ (например: 08:00-12:00).<br>
+              Оставьте поле пустым, если в этот день нет приема.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-gray" onclick="closeModal('editModal')">Отмена</button>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Модальное окно удаления врача -->
+  <div id="deleteModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Удалить врача</h3>
+        <button class="btn-close" onclick="closeModal('deleteModal')">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <form method="post" action="/admin?token={{ admin_token }}">
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" id="delete-id" name="id" value="">
+        <div class="modal-body">
+          <p>Вы действительно хотите удалить врача <strong id="delete-name"></strong>?</p>
+          <p>Это действие нельзя отменить.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-gray" onclick="closeModal('deleteModal')">Отмена</button>
+          <button type="submit" class="btn btn-danger">Удалить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Уведомление о копировании -->
+  <div id="toast" class="toast">Ссылка скопирована</div>
+
+  <script>
+    // Данные врачей для редактирования
+    const doctors = [
+      {% for d in doctors %}
+      {
+        id: "{{ d.id }}",
+        name: "{{ d.name }}",
+        position: "{{ d.position }}",
+        room: "{{ d.room }}",
+        token: "{{ d.token }}",
+        info: "{{ d.info }}",
+        photo: "{{ d.photo }}",
+        occupied: "{{ d.occupied }}",
+        schedules: [
+          {% for schedule in doctor_schedules.get(d.id, []) %}
+            "{{ schedule }}",
+          {% endfor %}
+        ]
+      },
+      {% endfor %}
+    ];
+
+    // Функции для работы с модальными окнами
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function openAddModal() {
+      // Сбросить форму
+      document.getElementById('addForm').reset();
+      openModal('addModal');
+    }
+
+    // Функция для заполнения полей расписания при редактировании
+    function fillScheduleFields(schedules) {
+      // Сначала очистим все поля
+      for (let i = 0; i < 7; i++) {
+        document.querySelector(`[name="schedule_${i}"]`).value = '';
+      }
+      
+      // Затем заполним данными
+      if (schedules && schedules.length) {
+        schedules.forEach(schedule => {
+          const parts = schedule.split(':');
+          if (parts.length >= 2) {
+            const day = parseInt(parts[0].trim());
+            if (!isNaN(day) && day >= 0 && day <= 6) {
+              const time = parts.slice(1).join(':').trim();
+              document.querySelector(`[name="schedule_${day}"]`).value = time;
+            }
+          }
+        });
+      }
+    }
+
+    function openEditModal(id) {
+      const doctor = doctors.find(d => d.id === id);
+      if (!doctor) return;
+
+      document.getElementById('edit-id').value = doctor.id;
+      document.getElementById('edit-name').value = doctor.name;
+      document.getElementById('edit-position').value = doctor.position;
+      document.getElementById('edit-room').value = doctor.room;
+      document.getElementById('edit-token').value = doctor.token;
+      document.getElementById('edit-info').value = doctor.info;
+      document.getElementById('edit-occupied').value = doctor.occupied;
+      
+      // Отображение текущего фото
+      const photoPreview = document.getElementById('edit-photo-preview');
+      const photoImg = document.getElementById('edit-photo-img');
+      if (doctor.photo) {
+        photoImg.src = '/static/photos/' + doctor.photo;
+        photoPreview.style.display = 'block';
+      } else {
+        photoPreview.style.display = 'none';
+      }
+      
+      // Заполнение расписания в новом формате
+      fillScheduleFields(doctor.schedules);
+      
+      openModal('editModal');
+    }
+
+    function openDeleteModal(id, name) {
+      document.getElementById('delete-id').value = id;
+      document.getElementById('delete-name').textContent = name;
+      openModal('deleteModal');
+    }
+
+    // Функция для копирования ссылки на страницу кабинета
+  function copyStatusLink(token) {
+  const url = `${window.location.origin}/status?token=${token}`;
+  navigator.clipboard.writeText(url).then(() => {
+    const toast = document.getElementById('toast');
+    toast.textContent = `Ссылка для управления статусом скопирована в буфер обмена`;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }).catch(err => {
+    console.error('Ошибка при копировании: ', err);
+    alert('Не удалось скопировать ссылку');
+  });
+}
+
+    // Автоматическое заполнение токена при изменении номера кабинета
+    document.getElementById('add-room').addEventListener('change', function() {
+      document.getElementById('add-token').value = this.value;
+    });
+    
+    document.getElementById('edit-room').addEventListener('change', function() {
+      document.getElementById('edit-token').value = this.value;
+    });
+
+    // Отображение имени выбранного файла
+    document.querySelectorAll('.file-input').forEach(input => {
+      input.addEventListener('change', function() {
+        const fileName = this.files[0]?.name || 'Выбрать файл';
+        const label = this.nextElementSibling;
+        const textSpan = label.querySelector('span:not(.material-icons)');
+        textSpan.textContent = fileName;
+      });
+    });
+
+    // Функция для сбора данных расписания при отправке формы
+    function collectScheduleData(form) {
+      const scheduleData = [];
+      
+      for (let i = 0; i < 7; i++) {
+        const timeValue = form.querySelector(`[name="schedule_${i}"]`).value.trim();
+        if (timeValue) {
+          scheduleData.push(`${i}: ${timeValue}`);
+        }
+      }
+      
+      return scheduleData.join('\n');
+    }
+
+    // Обработчики отправки форм
+    document.getElementById('addForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Собираем данные расписания
+      const scheduleData = collectScheduleData(this);
+      
+      // Добавляем скрытое поле с данными расписания
+      const scheduleInput = document.createElement('input');
+      scheduleInput.type = 'hidden';
+      scheduleInput.name = 'schedule';
+      scheduleInput.value = scheduleData;
+      this.appendChild(scheduleInput);
+      
+      // Отправляем форму
+      this.submit();
+    });
+
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Собираем данные расписания только если нужно обновить
+      if (this.querySelector('[name="update_schedule"]').checked) {
+        const scheduleData = collectScheduleData(this);
+        
+        // Добавляем скрытое поле с данными расписания
+        const scheduleInput = document.createElement('input');
+        scheduleInput.type = 'hidden';
+        scheduleInput.name = 'schedule';
+        scheduleInput.value = scheduleData;
+        this.appendChild(scheduleInput);
+      }
+      
+      // Отправляем форму
+      this.submit();
+    });
+  </script>
+</body>
+</html>
+
